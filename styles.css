@@ -1,0 +1,93 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #2196f3;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+#app {
+  background-color: #1e1e1e;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 400px;
+}
+
+header h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+}
+
+button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #2196f3;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1976d2;
+}
+
+#loading,
+#error {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+#loading {
+  color: #90caf9;
+}
+
+#error {
+  color: #ef5350;
+}
+
+#weather-display {
+  margin-top: 20px;
+}
+
+#weather-display h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+#weather-display p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none;
+}
