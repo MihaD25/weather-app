@@ -17,6 +17,22 @@ A simple weather application that lets you search for the current weather by cit
 - JavaScript (ES Modules)
 - Mocked API simulation
 
+## 📁 Project Structure
+
+```
+weather_app/
+│
+├── index.html → Web page structure
+├── styles.css → Page styling (colors, layout, fonts)
+├── app.js → Main application logic
+├── README.md → Project documentation
+│
+├── modules/ → JavaScript modules
+│ ├── config.js → Mock data for weather info
+│ ├── ui-controller.js → Functions to handle UI updates
+│ └── weather-service.js → Simulated API service functions
+```
+
 ## 📦 Installation
 
 1. Clone the repository:  
