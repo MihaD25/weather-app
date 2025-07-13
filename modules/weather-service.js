@@ -37,3 +37,16 @@ export const getWeatherByCoords = async (lat, lon) => {
     throw new Error("Nu s-au putut obține datele meteo după coordonate");
   }
 };
+
+/* // Testează în browser console
+const YOUR_API_KEY = "91fbb4b66883261e2794db05a8d041d8";
+fetch(
+  `https://api.openweathermap.org/data/2.5/weather?q=Oradea&appid=${YOUR_API_KEY}&units=metric`
+)
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("API Response:", data);
+    console.log("Temperature:", data.main.temp);
+    console.log("Description:", data.weather[0].description);
+    console.log("Icon code:", data.weather[0].icon);
+  }); */

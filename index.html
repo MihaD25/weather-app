@@ -11,12 +11,11 @@
     />
 
     <script type="module" src="app.js"></script>
-    <script type="module" src="./test.js"></script>
   </head>
   <body>
     <div id="app">
       <header>
-        <h1>Aplicație Meteo</h1>
+        <h1>Aplicație Meteo 🌦️</h1>
       </header>
 
       <main>
@@ -35,8 +34,11 @@
 
         <div id="weather-display" class="hidden">
           <h2 id="city-name"></h2>
+          <div id="weather-summary">
+            <img id="weather-icon" src="" alt="" />
+            <p id="weather-description"></p>
+          </div>
           <p>Temperatura: <span id="temperature"></span></p>
-          <p>Descriere: <span id="description"></span></p>
           <p>Umiditate: <span id="humidity"></span></p>
           <p>Presiune: <span id="pressure"></span></p>
           <p>Vânt: <span id="wind"></span></p>

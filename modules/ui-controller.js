@@ -5,9 +5,10 @@ export const elements = {
   loading: document.querySelector("#loading"),
   error: document.querySelector("#error"),
   weatherDisplay: document.querySelector("#weather-display"),
+  weatherIcon: document.querySelector("#weather-icon"),
   cityName: document.querySelector("#city-name"),
   temp: document.querySelector("#temperature"),
-  description: document.querySelector("#description"),
+  description: document.querySelector("#weather-description"),
   humidity: document.querySelector("#humidity"),
   pressure: document.querySelector("#pressure"),
   wind: document.querySelector("#wind"),
@@ -47,10 +48,11 @@ export const displayWeather = (data) => {
   elements.cityName.textContent = data.name;
   elements.temp.textContent = `${data.main.temp} °C`;
   elements.description.textContent = data.weather[0].description;
+  elements.weatherIcon.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+  elements.weatherIcon.alt = data.weather[0].description;
+
   elements.humidity.textContent = `${data.main.humidity} %`;
   elements.pressure.textContent = `${data.main.pressure} hPa`;
-
-  elements.wind.textContent = `${(data.wind.speed * 3.6).toFixed(1)} km/h`;
 
   elements.wind.textContent = `${(data.wind.speed * 3.6).toFixed(1)} km/h`;
 
