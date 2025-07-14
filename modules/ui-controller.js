@@ -14,6 +14,7 @@ export const elements = {
   wind: document.querySelector("#wind"),
   sunrise: document.querySelector("#sunrise"),
   sunset: document.querySelector("#sunset"),
+  warningMessage: document.querySelector("#warning-message"),
 };
 
 export const showLoading = () => {
@@ -68,5 +69,12 @@ export const displayWeather = (data) => {
     .toString()
     .padStart(2, "0")}`;
 
+  if (data.isFallback) {
+    elements.weatherIcon.style.display = "none";
+    elements.warningMessage.textContent = `⚠️ Date simulate. ${data.fallbackReason}`;
+    elements.warningMessage.style.display = "block";
+  } else {
+    elements.warningMessage.style.display = "none";
+  }
   elements.weatherDisplay.classList.remove("hidden");
 };

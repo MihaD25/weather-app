@@ -1,52 +1,83 @@
-import { MOCK_DATA } from "./config.js";
+import { mockWeatherData } from "./mock-data.js";
+import { CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from "./config.js";
 
-export const getCurrentWeather = async (city) => {
+const buildUrl = (endpoint, params = {}) => {
+  const url = new URL(`${CONFIG.API_BASE_URL}${endpoint}`);
+  url.searchParams.set("appid", CONFIG.API_KEY);
+  url.searchParams.set("units", CONFIG.DEFAULT_UNITS);
+  url.searchParams.set("lang", CONFIG.DEFAULT_LANG);
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, value);
+    }
+  });
+
+  return url.toString();
+};
+
+const makeRequest = async (url) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const response = await fetch(url);
 
-    if (!city || city.trim().length === 0) {
-      throw new Error("Nume oraș invalid");
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error("Orașul nu a fost găsit. Te rog încearcă altul.");
+      } else if (response.status === 401) {
+        throw new Error("Acces neautorizat. Verifică cheia API.");
+      } else if (response.status === 500) {
+        throw new Error(
+          "Eroare la serverul meteo. Te rugăm să încerci mai târziu."
+        );
+      } else {
+        throw new Error("A apărut o eroare la preluarea datelor meteo.");
+      }
     }
 
-    const data = { ...MOCK_DATA };
-
-    data.name = city;
-
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error("Eroare la getCurrentWeather:", error);
-    throw new Error("Nu s-au putut obține datele meteo");
+    if (error.name === "TypeError") {
+      throw new Error(ERROR_MESSAGES.NETWORK_ERROR);
+    }
+    throw error;
   }
+};
+
+export const getCurrentWeather = async (city) => {
+  if (!city || city.trim() === "") {
+    throw new Error(ERROR_MESSAGES.INVALID_CITY);
+  }
+
+  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, { q: city });
+  return await makeRequest(url);
 };
 
 export const getWeatherByCoords = async (lat, lon) => {
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (lat == null || lon == null) {
-      throw new Error("Coordonate invalide.");
-    }
-
-    const data = { ...MOCK_DATA };
-
-    data.name = `Lat: ${lat}, Lon: ${lon}`;
-
-    return data;
-  } catch (error) {
-    console.error("Eroare la getWeatherByCoords:", error);
-    throw new Error("Nu s-au putut obține datele meteo după coordonate");
+  if (lat == null || lon == null) {
+    throw new Error(ERROR_MESSAGES.INVALID_COORDS);
   }
+
+  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, { lat, lon });
+  return await makeRequest(url);
 };
 
-/* // Testează în browser console
-const YOUR_API_KEY = "91fbb4b66883261e2794db05a8d041d8";
-fetch(
-  `https://api.openweathermap.org/data/2.5/weather?q=Oradea&appid=${YOUR_API_KEY}&units=metric`
-)
-  .then((response) => response.json())
-  .then((data) => {
-    console.log("API Response:", data);
-    console.log("Temperature:", data.main.temp);
-    console.log("Description:", data.weather[0].description);
-    console.log("Icon code:", data.weather[0].icon);
-  }); */
+export const getCurrentWeatherWithFallback = async (city) => {
+  try {
+    const data = await getCurrentWeather(city);
+    return data;
+  } catch (error) {
+    if (
+      error.message === ERROR_MESSAGES.NETWORK_ERROR ||
+      error.message === ERROR_MESSAGES.API_ERROR ||
+      error.message.includes("API key invalid")
+    ) {
+      console.warn("Folosesc date mock din cauza:", error.message);
+      return {
+        ...mockWeatherData,
+        isFallback: true,
+        fallbackReason: error.message,
+      };
+    }
+    throw error;
+  }
+};

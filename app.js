@@ -1,7 +1,4 @@
-import("./modules/config.js").then((config) => {
-  console.log("MOCK_DATA:", config.MOCK_DATA);
-});
-
+import { ERROR_MESSAGES } from "./modules/config.js";
 import * as ui from "./modules/ui-controller.js";
 import * as service from "./modules/weather-service.js";
 
@@ -21,10 +18,11 @@ const handleSearch = async () => {
   ui.showLoading();
 
   try {
-    const data = await service.getCurrentWeather(city);
+    const data = await service.getCurrentWeatherWithFallback(city);
+    //console.log("Coordonate din search:", data.coord);
     ui.displayWeather(data);
   } catch (error) {
-    ui.showError("Nu am putut obține datele meteo.");
+    ui.showError(error.message);
   } finally {
     ui.hideLoading();
     ui.clearInput();
@@ -45,6 +43,7 @@ const handleLocationSearch = async () => {
       try {
         const { latitude, longitude } = position.coords;
         const data = await service.getWeatherByCoords(latitude, longitude);
+        //console.log("Coordonate din locație:", data.coord);
         ui.displayWeather(data);
       } catch (error) {
         ui.showError("Nu am putut obține datele meteo.");
