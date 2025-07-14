@@ -1,0 +1,46 @@
+export const getCoords = () =>
+  new Promise((resolve, reject) => {
+    const fallbackToIp = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+
+        // Verifică structura datelor în consolă dacă vrei să vezi
+        console.log(data);
+
+        resolve({
+          latitude: data.latitude,
+          longitude: data.longitude,
+          source: "ip",
+          accuracy: "city",
+        });
+      } catch (error) {
+        reject(new Error("Nu am putut determina locația"));
+      }
+    };
+
+    if (!navigator.geolocation) {
+      console.warn("Geolocation nu este suportat în browser");
+      return fallbackToIp();
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          source: "gps",
+          accuracy: "precise",
+        });
+      },
+      (error) => {
+        console.warn("Geolocation failed:", error.message);
+        fallbackToIp();
+      },
+      {
+        timeout: 8000,
+        enableHighAccuracy: true,
+        maximumAge: 60000,
+      }
+    );
+  });

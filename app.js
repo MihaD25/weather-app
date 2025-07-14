@@ -1,6 +1,10 @@
 import { ERROR_MESSAGES } from "./modules/config.js";
 import * as ui from "./modules/ui-controller.js";
 import * as service from "./modules/weather-service.js";
+import { getCoords } from "./modules/location-service.js";
+//pentru validare
+//window.getCoords = getCoords;
+//window.service = service;
 
 const isValidCity = (city) => {
   return city.length >= 2 && /^[a-zA-ZăâîșțĂÂÎȘȚ\s-]+$/.test(city);
@@ -19,7 +23,6 @@ const handleSearch = async () => {
 
   try {
     const data = await service.getCurrentWeatherWithFallback(city);
-    //console.log("Coordonate din search:", data.coord);
     ui.displayWeather(data);
   } catch (error) {
     ui.showError(error.message);
@@ -30,32 +33,21 @@ const handleSearch = async () => {
 };
 
 const handleLocationSearch = async () => {
-  if (!navigator.geolocation) {
-    ui.showError("Geolocația nu este suportată în browserul tău.");
-    return;
-  }
-
   ui.hideError();
   ui.showLoading();
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      try {
-        const { latitude, longitude } = position.coords;
-        const data = await service.getWeatherByCoords(latitude, longitude);
-        //console.log("Coordonate din locație:", data.coord);
-        ui.displayWeather(data);
-      } catch (error) {
-        ui.showError("Nu am putut obține datele meteo.");
-      } finally {
-        ui.hideLoading();
-      }
-    },
-    () => {
-      ui.showError("Nu am putut obține locația.");
-      ui.hideLoading();
-    }
-  );
+  try {
+    const coords = await getCoords();
+    const data = await service.getWeatherByCoords(
+      coords.latitude,
+      coords.longitude
+    );
+    ui.displayWeather(data);
+  } catch (error) {
+    ui.showError(error.message);
+  } finally {
+    ui.hideLoading();
+  }
 };
 
 const setupEventListeners = () => {
