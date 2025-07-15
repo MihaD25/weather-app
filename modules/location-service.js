@@ -5,9 +5,6 @@ export const getCoords = () =>
         const response = await fetch("https://ipapi.co/json/");
         const data = await response.json();
 
-        // Verifică structura datelor în consolă dacă vrei să vezi
-        console.log(data);
-
         resolve({
           latitude: data.latitude,
           longitude: data.longitude,

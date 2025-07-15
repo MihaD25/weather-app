@@ -29,6 +29,36 @@ header h1 {
   margin-bottom: 20px;
   color: #fff;
 }
+.controls {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.control-group label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.control-group select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ff9800; /* portocaliu */
+  color: rgb(66, 62, 62);
+  border: 1px solid #e67e22; /* portocaliu închis */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
 input[type="text"] {
   width: 100%;

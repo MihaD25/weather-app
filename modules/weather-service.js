@@ -4,8 +4,6 @@ import { CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from "./config.js";
 const buildUrl = (endpoint, params = {}) => {
   const url = new URL(`${CONFIG.API_BASE_URL}${endpoint}`);
   url.searchParams.set("appid", CONFIG.API_KEY);
-  url.searchParams.set("units", CONFIG.DEFAULT_UNITS);
-  url.searchParams.set("lang", CONFIG.DEFAULT_LANG);
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
@@ -43,27 +41,38 @@ const makeRequest = async (url) => {
   }
 };
 
-export const getCurrentWeather = async (city) => {
+export const getCurrentWeather = async (city, units, lang) => {
   if (!city || city.trim() === "") {
     throw new Error(ERROR_MESSAGES.INVALID_CITY);
   }
 
-  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, { q: city });
+  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, {
+    q: city,
+    units: units,
+    lang: lang,
+  });
+
   return await makeRequest(url);
 };
 
-export const getWeatherByCoords = async (lat, lon) => {
+export const getWeatherByCoords = async (lat, lon, units, lang) => {
   if (lat == null || lon == null) {
     throw new Error(ERROR_MESSAGES.INVALID_COORDS);
   }
 
-  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, { lat, lon });
+  const url = buildUrl(API_ENDPOINTS.CURRENT_WEATHER, {
+    lat,
+    lon,
+    units: units,
+    lang: lang,
+  });
+
   return await makeRequest(url);
 };
 
-export const getCurrentWeatherWithFallback = async (city) => {
+export const getCurrentWeatherWithFallback = async (city, units, lang) => {
   try {
-    const data = await getCurrentWeather(city);
+    const data = await getCurrentWeather(city, units, lang);
     return data;
   } catch (error) {
     if (

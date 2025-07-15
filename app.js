@@ -2,16 +2,17 @@ import { ERROR_MESSAGES } from "./modules/config.js";
 import * as ui from "./modules/ui-controller.js";
 import * as service from "./modules/weather-service.js";
 import { getCoords } from "./modules/location-service.js";
-//pentru validare
-//window.getCoords = getCoords;
-//window.service = service;
+import {
+  loadUserPreferences,
+  saveUserPreferences,
+} from "./modules/ui-controller.js";
 
 const isValidCity = (city) => {
   return city.length >= 2 && /^[a-zA-ZăâîșțĂÂÎȘȚ\s-]+$/.test(city);
 };
 
-const handleSearch = async () => {
-  const city = ui.getCityInput();
+const handleSearch = async (cityParam) => {
+  const city = cityParam || ui.getCityInput();
 
   if (!isValidCity(city)) {
     ui.showError("Introdu un nume de oraș valid.");
@@ -22,7 +23,13 @@ const handleSearch = async () => {
   ui.showLoading();
 
   try {
-    const data = await service.getCurrentWeatherWithFallback(city);
+    const prefs = loadUserPreferences();
+    const data = await service.getCurrentWeatherWithFallback(
+      city,
+      prefs.unit,
+      prefs.lang
+    );
+
     ui.displayWeather(data);
   } catch (error) {
     ui.showError(error.message);
@@ -38,10 +45,14 @@ const handleLocationSearch = async () => {
 
   try {
     const coords = await getCoords();
+    const prefs = loadUserPreferences();
     const data = await service.getWeatherByCoords(
       coords.latitude,
-      coords.longitude
+      coords.longitude,
+      prefs.unit,
+      prefs.lang
     );
+
     ui.displayWeather(data);
   } catch (error) {
     ui.showError(error.message);
@@ -59,13 +70,32 @@ const setupEventListeners = () => {
       handleSearch();
     }
   });
+  ui.elements.unitSelect.addEventListener("change", (e) => {
+    const unit = e.target.value;
+    const prefs = loadUserPreferences();
+    saveUserPreferences(unit, prefs.lang);
+    handleSearch(Cluj);
+  });
+
+  ui.elements.langSelect.addEventListener("change", (e) => {
+    const lang = e.target.value;
+    const prefs = loadUserPreferences();
+    saveUserPreferences(prefs.unit, lang);
+    handleSearch(Cluj);
+  });
 };
 
 const init = async () => {
   ui.showLoading();
 
   try {
-    const data = await service.getCurrentWeather("Cluj");
+    const prefs = loadUserPreferences();
+    const data = await service.getCurrentWeather(
+      "Cluj",
+      prefs.unit,
+      prefs.lang
+    );
+
     ui.displayWeather(data);
   } catch (error) {
     ui.showError("Nu am putut obține datele meteo.");
